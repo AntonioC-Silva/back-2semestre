@@ -20,43 +20,16 @@ class Command(BaseCommand):
         df_autores.columns = [c.strip().lower().lstrip("\ufeff") for c in df_autores.columns]
         df_livros.columns = [c.strip().lower().lstrip("\ufeff") for c in df_livros.columns]
         
-        
-        ###### Livros e Autores #####
-        
-        # 1) Unir nome e sobrenome do autor
-        df_autores['nome_completo'] = df_autores['autor']+' '+df_autores['s_autor']
-        # print(df_autores)
-        
-        # 2) Criar coluna "id" em Autores
+        df_autores['nome_completo'] = df_autores['nome']+' '+df_autores['sobrenome']
         df_autores['id'] = df_autores.index + 1
-        # print(df_autores)
-        
-        # 3) Criar dicionário de mapeamento
         mapa_autores = dict(zip(df_autores['nome_completo'], df_autores["id"]))
-        # print(mapa_autores)
-        
-        # 4) Buscar autor de livros no dicionário e retornar "id"
         df_livros['id_autor'] = df_livros['autor'].map(mapa_autores)
-        #df_livros.to_excel("livors.xlsx", index=False)
-        
-        
-        ###### Livros e Editoras #####
-        # 1) Criar coluna "id"
         df_editoras['id'] = df_editoras.index + 1
-        
-        # 2) Criar dicionário de mapeamento
         mapa_editoras = dict(zip(df_editoras['editora'], df_editoras['id']))
-        # print(mapa_editoras)
-        
-        # 3) Criar o "id_editora" em livros
         df_livros['id_editora'] = df_livros["editora"].map(mapa_editoras)
-
-        #df_livros.to_excel("livors.xlsx", index=False)
-        
         
         if o["truncate"]: Livro.objects.all().delete()
         
-
         df_livros['titulo']=df_livros["titulo"].astype(str).str.strip()
         df_livros['subtitulo']=df_livros["subtitulo"].astype(str).str.strip()
         
@@ -74,6 +47,7 @@ class Command(BaseCommand):
         df_livros['disponivel']=df_livros["disponivel"].astype(bool)
         df_livros['dimensoes']=df_livros["dimensoes"].astype(str).str.strip()
         df_livros['peso']=df_livros["peso"].astype(float)
+
 
         if o["update"]:
             criados = atualizados = 0
@@ -129,3 +103,5 @@ class Command(BaseCommand):
  
  
             self.stdout.write(self.style.SUCCESS(f"Criados: {len(objs)}"))
+
+
